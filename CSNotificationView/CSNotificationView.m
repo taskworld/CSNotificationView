@@ -119,6 +119,19 @@
     note.titleLabel.textAlignment = [self textAlignmentForStyle:style];
     note.titleLabel.font = font;
     
+    CGRect startFrame, endFrame;
+    [note animationFramesForVisible:YES startFrame:&startFrame endFrame:&endFrame];
+    
+    note.frame = startFrame;
+    
+    if (note.style == CSNotificationViewStyleUpdate) {
+        [note.parentNavigationController.view addSubview:note];
+    } else if (note.parentNavigationController) {
+        [note.parentNavigationController.view insertSubview:note belowSubview:note.parentNavigationController.navigationBar];
+    } else {
+        [note.parentViewController.view addSubview:note];
+    }
+    
     return note;
 }
 
@@ -424,21 +437,22 @@
     else if (!self.isAnimating) {
         self.animating = YES;
         
+        __weak typeof(self) weakSelf = self;
         [UIView animateWithDuration:0.9 delay:1.2 usingSpringWithDamping:0.6 initialSpringVelocity:0.6 options:UIViewAnimationCurveEaseInOut animations:^{
-            self.topLayoutContraintForTitleLabel.constant = [self topLayoutContraintMax];
-            [self layoutIfNeeded];
+            weakSelf.topLayoutContraintForTitleLabel.constant = [weakSelf topLayoutContraintMax];
+            [weakSelf layoutIfNeeded];
             
         } completion:^(BOOL finished) {
-            [self setTitle:title message:message image:image toViewController:viewController];
-            self.topLayoutContraintForTitleLabel.constant = [self topLayoutContriantMin];
-            [self layoutIfNeeded];
+            [weakSelf setTitle:title message:message image:image toViewController:viewController];
+            weakSelf.topLayoutContraintForTitleLabel.constant = [weakSelf topLayoutContriantMin];
+            [weakSelf layoutIfNeeded];
             
             [UIView animateWithDuration:1.2 delay:0.0 usingSpringWithDamping:0.6 initialSpringVelocity:0.6 options:UIViewAnimationCurveEaseInOut animations:^{
-                self.topLayoutContraintForTitleLabel.constant = [self topLayoutContraintMiddle];
-                [self layoutIfNeeded];
+                weakSelf.topLayoutContraintForTitleLabel.constant = [weakSelf topLayoutContraintMiddle];
+                [weakSelf layoutIfNeeded];
                 
             } completion:^(BOOL finished) {
-                self.animating = NO;
+                weakSelf.animating = NO;
             }];
         }];
     }
@@ -448,12 +462,13 @@
     self.titleLabel.text = title;
     self.messageLabel.text = message;
     self.image = image;
+    __weak typeof(self) weakSelf = self;
     self.tapHandler = ^{
-        if ([self.parentViewController isKindOfClass:[UINavigationController class]] && viewController) {
-            UINavigationController *navigationController = (UINavigationController *)self.parentViewController;
+        if ([weakSelf.parentViewController isKindOfClass:[UINavigationController class]] && viewController) {
+            UINavigationController *navigationController = (UINavigationController *)weakSelf.parentViewController;
             [navigationController pushViewController:viewController animated:YES];
         }
-        [self setVisible:NO animated:YES completion:nil];
+        [weakSelf setVisible:NO animated:YES completion:nil];
     };
 }
 
@@ -681,10 +696,8 @@
             matchedImage = [UIImage imageWithContentsOfFile:[assetsBundle pathForResource:@"exclamationMark" ofType:@"png"]];
             break;
         case CSNotificationViewStyleWarning:
-            matchedImage = nil;
-            break;
         case CSNotificationViewStyleUpdate:
-            matchedImage = [UIImage imageNamed:@"TaskworldNotificationLogo"];
+            matchedImage = nil;
             break;
         default:
             break;

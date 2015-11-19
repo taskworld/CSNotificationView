@@ -193,14 +193,11 @@
                 _messageLabel.textColor = [UIColor whiteColor];
                 _messageLabel.backgroundColor = [UIColor clearColor];
                 _messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
-                
-                _messageLabel.numberOfLines = 2;
                 _messageLabel.minimumScaleFactor = 0.6;
                 _messageLabel.lineBreakMode = NSLineBreakByTruncatingTail;
                 
                 UIFontDescriptor *messageLabelFontDescriptor = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleBody];
                 _messageLabel.font = [UIFont fontWithDescriptor:messageLabelFontDescriptor size:14.0f];
-                _messageLabel.adjustsFontSizeToFitWidth = YES;
                 
                 [self addSubview:_messageLabel];
             }
@@ -212,14 +209,11 @@
                 _titleLabel.textColor = [UIColor whiteColor];
                 _titleLabel.backgroundColor = [UIColor clearColor];
                 _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-                
-                _titleLabel.numberOfLines = 2;
                 _titleLabel.minimumScaleFactor = 0.6;
                 _titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
                 
                 UIFontDescriptor *titleLabelFontDescriptor = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleBody];
                 _titleLabel.font = [UIFont fontWithDescriptor:titleLabelFontDescriptor size:14.0f];
-                _titleLabel.adjustsFontSizeToFitWidth = YES;
                 
                 [self addSubview:_titleLabel];
             }
@@ -354,6 +348,15 @@
                              constant:55]];
         
         [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_titleLabel
+                             attribute:NSLayoutAttributeRight
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:self
+                             attribute:NSLayoutAttributeRight
+                             multiplier:1.0f
+                             constant:-15]];
+        
+        [self addConstraint:[NSLayoutConstraint
                              constraintWithItem:_messageLabel
                              attribute:NSLayoutAttributeLeft
                              relatedBy:NSLayoutRelationEqual
@@ -361,6 +364,15 @@
                              attribute:NSLayoutAttributeLeft
                              multiplier:1.0f
                              constant:55]];
+        
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_messageLabel
+                             attribute:NSLayoutAttributeRight
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:self
+                             attribute:NSLayoutAttributeRight
+                             multiplier:1.0f
+                             constant:-15]];
     } else {
         [self addConstraint:[NSLayoutConstraint
                              constraintWithItem:_titleLabel
